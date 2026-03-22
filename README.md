@@ -24,6 +24,10 @@ Reviews your Claude skills and tells you what's actually wrong with them. The mo
 
 Based on Anthropic's official Complete Guide to Building Skills for Claude.
 
+### `fowler-edit`
+
+A copy editor backed by the full Fowler's Concise Dictionary of Modern English Usage. Paste any text and get back a corrected version with annotated changes, each one cited to the specific Fowler entry that justifies it.
+
 ---
 
 ## Installing a skill
