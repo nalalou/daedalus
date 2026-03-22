@@ -1,6 +1,6 @@
 ---
 name: jobs-to-be-done
-description: Use when analyzing customer needs, designing products, positioning offerings, or researching why customers switch to or away from a solution - applies JTBD framework to surface real demand drivers beyond demographics
+description: Use when analyzing customer needs, running a JTBD analysis, identifying jobs-to-be-done, designing products, positioning offerings, or researching why customers switch to or away from a solution - applies JTBD framework to surface real demand drivers beyond demographics
 ---
 
 # Jobs-To-Be-Done (JTBD) Framework
