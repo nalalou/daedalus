@@ -1,36 +1,30 @@
 # daedalus
 
-A collection of Claude skills built from real research and documentation — ready to drop into Claude Code or Claude.ai.
+Claude skills. Drop them into Claude Code or Claude.ai.
 
 ---
 
-## What's inside
+## Skills
 
 ### `ux-best-practices`
 
-Everything you need to make confident UX decisions, backed by actual research instead of vibes.
-
-Draws from 487 Nielsen Norman Group reports — usability testing across 57+ organizations, 350+ ecommerce sites, and studies in 8 countries spanning 2001–2023. Covers navigation, search, forms, ecommerce checkout, mobile/tablet, intranets, accessibility, children's UX, and research methods.
+Guidelines from 487 Nielsen Norman Group reports — usability testing across 57+ organizations, 350+ ecommerce sites, and studies in 8 countries over two decades. Covers navigation, search, forms, ecommerce, mobile, intranets, accessibility, children's UX, and research methods.
 
 ### `jobs-to-be-done`
 
-A 7-step workflow for running a proper JTBD analysis. Not just the theory — Claude will actually walk you through surfacing the struggling moment, writing job statements in the right format, mapping functional/social/emotional dimensions, and identifying real competition (including nonconsumption).
-
-Based on Christensen et al., "Know Your Customers' Jobs to Be Done" (HBR). Built with one rule baked in: jobs are never business objectives.
+Walks you through a JTBD analysis step by step. Surfaces the struggling moment, writes job statements in the right format, maps functional/social/emotional dimensions, and identifies real competition — including nonconsumption. One rule is baked in: jobs describe what customers are trying to accomplish, not what the business wants to achieve.
 
 ### `skill-optimizer`
 
-Reviews your Claude skills and tells you what's actually wrong with them. The most common problem — skills that load as context but don't change Claude's behavior — gets caught first.
-
-Based on Anthropic's official Complete Guide to Building Skills for Claude.
+Reviews a skill and tells you what's wrong with it. Catches the most common failure mode first: skills that load as background context but don't actually change what Claude does.
 
 ### `fowler-edit`
 
-A copy editor backed by the full Fowler's Concise Dictionary of Modern English Usage. Paste any text and get back a corrected version with annotated changes, each one cited to the specific Fowler entry that justifies it.
+Copy editing against the full Fowler's Concise Dictionary of Modern English Usage. Returns corrected text with each change cited to the Fowler entry that justifies it.
 
 ---
 
-## Installing a skill
+## Installing
 
 **Claude Code:**
 ```bash
@@ -38,21 +32,13 @@ cp -r <skill-folder> ~/.claude/skills/
 ```
 
 **Claude.ai:**
-1. Zip the skill folder
-2. Go to Settings → Capabilities → Skills → Upload
-
-That's it. Skills load automatically when relevant.
+Zip the folder → Settings → Capabilities → Skills → Upload
 
 ---
 
 ## Sources
 
-- UX guidelines: [Nielsen Norman Group](https://www.nngroup.com/reports/)
-- JTBD framework: Christensen, Hall, Dillon & Duncan — Harvard Business Review
+- UX: [Nielsen Norman Group](https://www.nngroup.com/reports/)
+- JTBD: Christensen, Hall, Dillon & Duncan — HBR
 - Skill structure: Anthropic's Complete Guide to Building Skills for Claude
-
----
-
-## More skills coming
-
-Open an issue if you have a source worth turning into one.
+- Copy editing: Fowler's Concise Dictionary of Modern English Usage
