@@ -1,7 +1,8 @@
----
+***
+
 name: fowler-edit
 description: Use when the user wants their writing checked or edited against Fowler's rules — word choice, commonly confused pairs, spelling variants, punctuation, and usage. Trigger on requests like "edit this", "check my writing", "apply Fowler", or when text is pasted for review.
----
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Fowler Edit
 
@@ -14,6 +15,7 @@ Apply *Fowler's Concise Dictionary of Modern English Usage* to user-submitted te
 ## Workflow
 
 ### 1. Take the user's text
+
 If text was pasted or quoted in the message, use it directly. Don't ask clarifying questions first.
 
 If no text was provided, ask: "Paste the text you'd like me to run through Fowler." Nothing else.
@@ -21,6 +23,7 @@ If no text was provided, ask: "Paste the text you'd like me to run through Fowle
 ### 2. Dispatch a subagent with the full Fowler dictionary
 
 Use the Agent tool to dispatch a `general-purpose` subagent. The subagent prompt must:
+
 1. Read the full `fowler-clean.md` via the Read tool
 2. Apply it to the user's text
 3. Return corrected text + annotated changes
@@ -74,5 +77,8 @@ Replace `[INSERT USER TEXT HERE]` with the user's actual text before dispatching
 ### 3. Return the subagent's output to the user
 
 Present:
-- **Edited text** (the corrected version)
-- **Changes** (the annotated list with Fowler citations)
+
+* **Edited text** (the corrected version)
+
+* **Changes** (the annotated list with Fowler citations)
+
