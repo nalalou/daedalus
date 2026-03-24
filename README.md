@@ -14,6 +14,10 @@ Guidelines from 487 Nielsen Norman Group reports — usability testing across 57
 
 Walks you through a JTBD analysis step by step. Surfaces the struggling moment, writes job statements in the right format, maps functional/social/emotional dimensions, and identifies real competition — including nonconsumption. One rule is baked in: jobs describe what customers are trying to accomplish, not what the business wants to achieve.
 
+### `content-design`
+
+Content design system work in four modes: create content standards from scratch, audit existing content for inconsistencies, write component-level guidelines (buttons, error messages, empty states), or evaluate copy against existing standards. Based on Nielsen Norman Group's content design systems framework.
+
 ### `skill-optimizer`
 
 Reviews a skill and tells you what's wrong with it. Catches the most common failure mode first: skills that load as background context but don't actually change what Claude does.
@@ -39,6 +43,7 @@ Zip the folder → Settings → Capabilities → Skills → Upload
 ## Sources
 
 - UX: [Nielsen Norman Group](https://www.nngroup.com/reports/)
+- Content design: [Nielsen Norman Group — Content Standards in Design Systems](https://www.nngroup.com/articles/content-design-systems/)
 - JTBD: Christensen, Hall, Dillon & Duncan — HBR
 - Skill structure: Anthropic's Complete Guide to Building Skills for Claude
 - Copy editing: Fowler's Concise Dictionary of Modern English Usage
