@@ -22,6 +22,10 @@ Content design system work in four modes: create content standards from scratch,
 
 Reviews a skill and tells you what's wrong with it. Catches the most common failure mode first: skills that load as background context but don't actually change what Claude does.
 
+### `test-agent`
+
+Scaffolds a background test agent for any vitest/jest project. Auto-detects your framework, finds exemplar tests, and generates a tmux-based agent that continuously writes missing tests via Claude. Five quality gates — assertion lint, passes, coverage, mutation check, full suite — with retry-on-failure feedback. Prioritizes complex files (most branches first) and skips files it can't crack.
+
 ### `fowler-edit`
 
 Copy editing against the full Fowler's Concise Dictionary of Modern English Usage. Returns corrected text with each change cited to the Fowler entry that justifies it.
