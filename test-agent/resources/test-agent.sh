@@ -173,17 +173,23 @@ is_skipped() {
 %%PATTERN_NAME_FUNCTION%%
 
 # ── Claude invocation & quality gates ──────────────────────────────────────
+# Global: captures the last gate failure reason for retry feedback
+LAST_GATE_FAILURE=""
+# Runtime skip list: files that failed all attempts this session
+FAILED_FILES=""
+
 generate_test() {
   local source_path="$1"
   local test_path="$2"
   local category="$3"
+  local feedback="${4:-}"  # Optional: failure reason from previous attempt
 
   local exemplar_path
   exemplar_path=$(get_exemplar "$category")
   local pattern_name
   pattern_name=$(get_pattern_name "$category")
 
-  # Build prompt from template
+  # Build the agent prompt from template
   local prompt
   prompt=$(cat "$PROMPT_TEMPLATE")
   prompt="${prompt//%%PATTERN%%/$pattern_name}"
@@ -191,7 +197,7 @@ generate_test() {
   prompt="${prompt//%%SOURCE_CONTENT%%/$(cat "$WORKTREE_PATH/$source_path")}"
   prompt="${prompt//%%TEST_PATH%%/$test_path}"
 
-  # Build exemplar section — full block or empty if no exemplar exists
+  # Build exemplar section
   local exemplar_section=""
   if [[ -n "$exemplar_path" && -f "$WORKTREE_PATH/$exemplar_path" ]]; then
     exemplar_section="EXEMPLAR TEST (follow this style exactly):
@@ -201,22 +207,52 @@ $(cat "$WORKTREE_PATH/$exemplar_path")"
   fi
   prompt="${prompt//%%EXEMPLAR_SECTION%%/$exemplar_section}"
 
+  # Append feedback from previous failed attempt
+  if [[ -n "$feedback" ]]; then
+    prompt="$prompt
+
+IMPORTANT — YOUR PREVIOUS ATTEMPT WAS REJECTED:
+$feedback
+
+Fix these issues in your new attempt. Do not repeat the same mistakes."
+  fi
+
+  # Agent instructions: read files, write test, run it, iterate
+  prompt="$prompt
+
+YOU ARE AN AGENT with access to Read, Write, and Bash tools.
+
+Your workflow:
+1. Read the source file to understand its behavior and dependencies
+2. Read the exemplar test (if provided) to match the project's test style
+3. Read any imports/types you need to understand (use Read on referenced files)
+4. Write the test file to $test_path
+5. Run: %%PKG_MANAGER%% vitest run $test_path (or equivalent test command)
+6. If the test fails, read the error output, fix the test, and retry
+7. Once the test passes, you are done
+
+Do NOT commit anything. Do NOT run git commands. Just write a passing test file."
+
   cd "$WORKTREE_PATH"
-  local output
-  output=$(echo "$prompt" | claude -p \
+  mkdir -p "$(dirname "$WORKTREE_PATH/$test_path")"
+
+  echo "$prompt" | claude \
     --model sonnet \
-    --max-budget-usd 0.50 \
+    --max-budget-usd 1.00 \
     --no-session-persistence \
-    2>/dev/null) || {
-    echo "ERROR: Claude invocation failed for $source_path"
+    --allowedTools "Read,Write,Bash(%%PKG_MANAGER%%:*)" \
+    --permission-mode bypassPermissions \
+    -p \
+    2>/dev/null || {
+    echo "ERROR: Claude agent failed for $source_path"
     return 1
   }
 
-  # Strip markdown fences if Claude wrapped the output
-  output=$(printf '%s\n' "$output" | sed -E '/^```(typescript|ts|tsx)?$/d')
-
-  mkdir -p "$(dirname "$WORKTREE_PATH/$test_path")"
-  printf '%s\n' "$output" > "$WORKTREE_PATH/$test_path"
+  # Verify the test file was written
+  if [[ ! -f "$WORKTREE_PATH/$test_path" ]]; then
+    echo "ERROR: Agent did not write test file at $test_path"
+    return 1
+  fi
 }
 
 validate_test() {
@@ -227,18 +263,23 @@ validate_test() {
 
   # Gate 0: Static assertion lint — reject weak tests before running anything
   echo "::status id=phase running Gate 0: assertion quality..."
-  if ! validate_assertions "$WORKTREE_PATH/$test_path"; then
+  local gate0_result
+  gate0_result=$(validate_assertions "$WORKTREE_PATH/$test_path" 2>&1)
+  if [[ $? -ne 0 ]]; then
+    echo "$gate0_result"
+    LAST_GATE_FAILURE="$gate0_result"
     return 1
   fi
 
   # Gate 1: Test passes in isolation
   echo "::status id=phase running Gate 1: test passes..."
   if ! %%TEST_CMD%% "$test_path" 2>&1; then
-    echo "::err Gate 1 failed — test does not pass"
+    LAST_GATE_FAILURE="Gate 1 failed — test does not pass in isolation. Check for import errors, missing mocks, or incorrect test setup."
+    echo "::err $LAST_GATE_FAILURE"
     return 1
   fi
 
-  # Gate 2: Adds ≥5% branch coverage
+  # Gate 2: Adds ≥5% line coverage
   echo "::status id=phase running Gate 2: coverage check..."
   %%COVERAGE_CMD_FILE%% >/dev/null 2>&1 || true
 
@@ -248,21 +289,27 @@ validate_test() {
     local line_pct
     line_pct=$(jq -r --arg f "$abs_source" '.[$f].lines.pct // 0' "$new_summary")
     if (( $(echo "$line_pct < 5" | bc -l) )); then
-      echo "::err Gate 2 failed — only ${line_pct}% line coverage (need ≥5%)"
+      LAST_GATE_FAILURE="Gate 2 failed — only ${line_pct}% line coverage (need ≥5%). The test must actually import and exercise the source code's functions, not just mock everything."
+      echo "::err $LAST_GATE_FAILURE"
       return 1
     fi
   fi
 
   # Gate 3: Mutation check — does the test catch a real bug?
   echo "::status id=phase running Gate 3: mutation check..."
-  if ! mutation_check "$source_path" "$test_path"; then
+  local gate3_result
+  gate3_result=$(mutation_check "$source_path" "$test_path" 2>&1)
+  if [[ $? -ne 0 ]]; then
+    echo "$gate3_result"
+    LAST_GATE_FAILURE="$gate3_result"
     return 1
   fi
 
   # Gate 4: Full suite still passes
   echo "::status id=phase running Gate 4: full suite..."
   if ! %%TEST_CMD%% 2>&1; then
-    echo "::err Gate 4 failed — full suite broken"
+    LAST_GATE_FAILURE="Gate 4 failed — full suite broken after adding this test. The test likely pollutes shared state (MSW handlers, global mocks)."
+    echo "::err $LAST_GATE_FAILURE"
     return 1
   fi
 
@@ -424,8 +471,21 @@ run_one_iteration() {
     return
   fi
 
-  local source_path
-  source_path=$(echo "$uncovered" | head -1)
+  # Pick the first uncovered file not already failed this session
+  local source_path=""
+  while IFS= read -r candidate; do
+    if [[ -z "$candidate" ]]; then continue; fi
+    if ! echo "$FAILED_FILES" | grep -qF "$candidate"; then
+      source_path="$candidate"
+      break
+    fi
+  done <<< "$uncovered"
+
+  if [[ -z "$source_path" ]]; then
+    echo "::ok All uncovered files already attempted"
+    return
+  fi
+
   local source_name
   source_name=$(basename "$source_path")
 
@@ -440,35 +500,58 @@ run_one_iteration() {
   fi
 
   echo "::status id=file running $source_name ($category)"
-  echo "::status id=phase running Generating test via Claude..."
 
-  if ! generate_test "$source_path" "$test_path" "$category"; then
-    echo "::err $source_name — Claude invocation failed"
-    sedi "/## Failed attempts/a\\
-- $source_path — Claude invocation failed (iteration $iteration)" "$REPORT_FILE"
-    echo "::status id=file error $source_name"
-    return
-  fi
+  # Try up to 3 times: initial attempt + 2 retries with feedback
+  local max_attempts=3
+  local attempt=0
+  local feedback=""
+  local success=false
 
-  echo "::status id=phase running Gate 1: test isolation..."
-  if validate_test "$source_path" "$test_path"; then
+  while [[ $attempt -lt $max_attempts ]]; do
+    attempt=$((attempt + 1))
+    LAST_GATE_FAILURE=""
+
+    if [[ $attempt -gt 1 ]]; then
+      echo "::info Retry $((attempt - 1))/2 for $source_name"
+    fi
+
+    echo "::status id=phase running Generating test via Claude (attempt $attempt)..."
+
+    if ! generate_test "$source_path" "$test_path" "$category" "$feedback"; then
+      echo "::err $source_name — Claude invocation failed (attempt $attempt)"
+      feedback="Claude invocation failed. Try a simpler approach."
+      continue
+    fi
+
+    if validate_test "$source_path" "$test_path"; then
+      success=true
+      break
+    else
+      rm -f "$WORKTREE_PATH/$test_path"
+      feedback="$LAST_GATE_FAILURE"
+      echo "::warn $source_name — attempt $attempt failed, will retry with feedback"
+    fi
+  done
+
+  if [[ "$success" == true ]]; then
     cd "$WORKTREE_PATH"
     git add "$test_path"
     git commit -m "test: add integration tests for $source_path
 
-Auto-generated by test-agent (iteration $iteration)"
+Auto-generated by test-agent (iteration $iteration, attempt $attempt)"
 
     local coverage_pct
     coverage_pct=$(jq -r --arg f "$WORKTREE_PATH/$source_path" '.[$f].lines.pct // "?"' "$AGENT_DIR/coverage-check/coverage-summary.json" 2>/dev/null || echo "?")
-    echo "::ok $source_name — ${coverage_pct}% coverage"
+    echo "::ok $source_name — ${coverage_pct}% coverage (attempt $attempt)"
     sedi "/## Tests written/a\\
-- $source_path → $test_path (+${coverage_pct}% coverage)" "$REPORT_FILE"
+- $source_path → $test_path (+${coverage_pct}% coverage, attempt $attempt)" "$REPORT_FILE"
     echo "::status id=file done $source_name"
   else
-    rm -f "$WORKTREE_PATH/$test_path"
-    echo "::err $source_name — validation failed"
+    echo "::err $source_name — failed all $max_attempts attempts"
+    FAILED_FILES="$FAILED_FILES
+$source_path"
     sedi "/## Failed attempts/a\\
-- $source_path — validation failed (iteration $iteration)" "$REPORT_FILE"
+- $source_path — failed all $max_attempts attempts (iteration $iteration): $LAST_GATE_FAILURE" "$REPORT_FILE"
     echo "::status id=file error $source_name"
   fi
 }
@@ -493,6 +576,9 @@ run_dry() {
     echo "  $i. $file → $tp ($cat)"
     [[ $i -ge $MAX_ITERATIONS ]] && break
   done <<< "$uncovered"
+  local max_cost=$(echo "$MAX_ITERATIONS * 3 * 1.00" | bc)
+  echo ""
+  echo "  ⚠ Estimated max cost: $MAX_ITERATIONS iterations × 3 attempts × \$1.00 = \$${max_cost}"
 }
 
 # ── Subcommands ────────────────────────────────────────────────────────────
@@ -505,6 +591,8 @@ cmd_start() {
     run_dry
     return
   fi
+  local max_cost=$(echo "$MAX_ITERATIONS * 3 * 1.00" | bc)
+  echo "⚠ Cost warning: up to $MAX_ITERATIONS iterations × 3 attempts × \$1.00 = \$${max_cost} max Claude API usage"
   echo "Starting test agent (max=$MAX_ITERATIONS, interval=${INTERVAL}s)..."
   # Pipe through gloss watch if available, otherwise raw output
   if command -v gloss >/dev/null 2>&1; then
@@ -549,6 +637,8 @@ cmd_loop() {
   mkdir -p "$AGENT_DIR"
   echo $$ > "$PID_FILE"
   trap 'echo "::status id=agent done Stopped"; rm -f "$PID_FILE"; exit 0' INT TERM
+
+  echo "⚠ WARNING: This agent makes Claude API calls in a loop. Each iteration can use up to 3 invocations (\$1.00 each). Monitor usage." >&2
 
   init_report
 
