@@ -1,8 +1,8 @@
 # daedalus
 
-Claude skills. Drop them into Claude Code or Claude.ai.
+Tools for your agent.
 
----
+***
 
 ## Skills
 
@@ -26,11 +26,12 @@ Reviews a skill and tells you what's wrong with it. Catches the most common fail
 
 Copy editing against the full Fowler's Concise Dictionary of Modern English Usage. Returns corrected text with each change cited to the Fowler entry that justifies it.
 
----
+***
 
 ## Installing
 
 **Claude Code:**
+
 ```bash
 cp -r <skill-folder> ~/.claude/skills/
 ```
@@ -38,12 +39,17 @@ cp -r <skill-folder> ~/.claude/skills/
 **Claude.ai:**
 Zip the folder → Settings → Capabilities → Skills → Upload
 
----
+***
 
 ## Sources
 
-- UX: [Nielsen Norman Group](https://www.nngroup.com/reports/)
-- Content design: [Nielsen Norman Group — Content Standards in Design Systems](https://www.nngroup.com/articles/content-design-systems/)
-- JTBD: Christensen, Hall, Dillon & Duncan — HBR
-- Skill structure: Anthropic's Complete Guide to Building Skills for Claude
-- Copy editing: Fowler's Concise Dictionary of Modern English Usage
+* UX: [Nielsen Norman Group](https://www.nngroup.com/reports/)
+
+* Content design: [Nielsen Norman Group — Content Standards in Design Systems](https://www.nngroup.com/articles/content-design-systems/)
+
+* JTBD: Christensen, Hall, Dillon & Duncan — HBR
+
+* Skill structure: Anthropic's Complete Guide to Building Skills for Claude
+
+* Copy editing: Fowler's Concise Dictionary of Modern English Usage
+
