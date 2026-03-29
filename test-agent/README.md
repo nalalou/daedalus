@@ -23,16 +23,19 @@ The skill auto-detects your project and generates:
 The agent runs in a tmux session and loops:
 
 1. Runs coverage to find untested files (sorted by complexity — most branches first)
-2. Invokes Claude to generate a test
+2. Spawns a Claude agent (not a one-shot call) that can read source files, understand imports, write the test, run vitest, and fix failures on its own
 3. Validates through 5 quality gates:
-   - **Gate 0:** Static assertion lint — rejects weak assertions (`toBeDefined`, `toBeTruthy`)
+   - **Gate 0:** Static assertion lint — rejects weak assertions (`toBeDefined`, `toBeTruthy`). Every test block must have a specific assertion. At least one error-path test required.
    - **Gate 1:** Test passes in isolation
    - **Gate 2:** Adds >=5% line coverage to the target file
-   - **Gate 3:** Mutation check — flips a condition in the source, verifies test fails
+   - **Gate 3:** Mutation check — flips a condition in the source, verifies the test catches it
    - **Gate 4:** Full test suite still passes
 4. Commits passing tests to `chore/auto-tests` branch
-5. If a gate fails, retries up to 3 times with the failure reason fed back to Claude
-6. Sleeps, moves to next file
+5. If a gate fails, retries up to 3 times with the failure reason fed back to Claude ("your previous attempt was rejected because...")
+6. If all 3 attempts fail, skips the file and moves to the next target
+7. Sleeps, repeats
+
+The agent has scoped tool access: `Read`, `Write`, and `Bash(pnpm vitest:*)` only. It cannot run git, access the network, or execute arbitrary commands.
 
 ## Commands
 
@@ -56,7 +59,7 @@ git log chore/auto-tests                              # review generated tests
 
 ## Cost
 
-Each Claude invocation is capped at $0.50. With up to 3 attempts per file, expect ~$1.50/file worst case. The `--dry-run` flag shows what would be tested without invoking Claude.
+Each Claude agent invocation is capped at $1.00 (agent mode uses more tokens than one-shot since it reads files, runs tests, and iterates). With up to 3 attempts per file, expect ~$3.00/file worst case. The `--dry-run` flag shows what would be tested without invoking Claude, including an estimated max cost.
 
 ## Customization
 
