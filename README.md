@@ -24,7 +24,7 @@ Reviews a skill and tells you what's wrong with it. Catches the most common fail
 
 ### `test-agent`
 
-Scaffolds a background test agent for any vitest/jest project. Auto-detects your framework, finds exemplar tests, and generates a tmux-based agent that continuously writes missing tests via Claude. Five quality gates — assertion lint, passes, coverage, mutation check, full suite — with retry-on-failure feedback. Prioritizes complex files (most branches first) and skips files it can't crack.
+Scaffolds a background test agent for any vitest/jest project. Auto-detects your framework, finds exemplar tests, and generates a tmux-based loop that spawns Claude agents to write missing tests. Each agent can read source files, run vitest, and fix its own failures. Five quality gates — assertion lint, passes, coverage, mutation check, full suite. Retries with failure feedback, prioritizes complex files first, skips what it can't crack. Scoped tool access (Read/Write/Bash for vitest only).
 
 ### `fowler-edit`
 
