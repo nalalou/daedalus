@@ -78,5 +78,3 @@ Present:
 
 - **Edited text** (the corrected version)
 - **Changes** (the annotated list with Fowler citations)
-
-how does this wrok
