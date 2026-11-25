@@ -1,226 +1,149 @@
 ---
 name: ux-best-practices
-description: Use when designing or evaluating user interfaces — covers usability heuristics, information architecture, navigation, search, e-commerce checkout flows, intranet design, mobile/tablet UX, and UX for special populations (children, seniors). Source: Nielsen Norman Group empirical research reports.
-doc_version: NN/g 4th Edition (2023)
+description: Use when designing or reviewing a screen, flow, form, paywall, onboarding, checkout, or landing page for usability — whether people can find things, understand them, and finish the task. Triggers on "usability review", "UX review", "is this easy to use", "why are people dropping off", "review this flow", "heuristic evaluation", "check this form", "check this checkout". Applies Nielsen Norman Group's usability heuristics and well-established research findings.
 ---
 
-# UX Best Practices Skill
+# UX Best Practices
 
-Evidence-based UX design guidelines drawn from Nielsen Norman Group (NN/g) empirical research — usability testing across 57+ organizations, 350+ e-commerce sites, and studies in 8+ countries.
+Usability rules from Nielsen Norman Group's published research. This skill is about whether people can use the thing, not whether it looks good.
 
-**Source:** `references/reports.md` — 487 pages of NN/g research reports covering intranet design, e-commerce UX, mobile/tablet UX, and design for children.
+Every rule here was checked against NN/g's free articles on 2026-11-24. The articles are listed under Sources at the bottom. Rules are paraphrased, not copied. If a question goes beyond what is written here, read the relevant article on nngroup.com rather than guessing, and do not quote a number that is not on this page or in an article you have read in this session.
 
----
+## How to use this
 
-## When to Use This Skill
+**When designing:** build to the rules below from the start. Before showing the work, walk through the main task as a first-time user and fix anything that breaks a rule.
 
-Trigger this skill when:
+**When reviewing:** walk through the real task step by step, on the real screen or a screenshot, not from the code alone. For each problem, report:
 
-- **Designing UI components** — navigation menus, search bars, shopping carts, checkout flows, forms
-- **Reviewing existing designs** — auditing for usability, findability, or conversion issues
-- **Building intranet or enterprise tools** — employee portals, content management, workplace search
-- **Designing e-commerce experiences** — product pages, cart, checkout, registration flows
-- **Designing for mobile or tablet** — responsive design decisions, touch targets, layout adaptation
-- **Designing for children (ages 3–12)** — age-appropriate interfaces, educational apps
-- **Improving information architecture** — site structure, labeling, categorization, wayfinding
-- **Writing UX audit criteria** — generating heuristics or review checklists backed by research
+1. What the person is trying to do and where they get stuck
+2. Which rule it breaks
+3. How bad it is (scale below)
+4. The specific fix
 
----
+Lead with the worst problems. Skip anything cosmetic unless asked. Do not pad the list: three real problems beat fifteen nitpicks.
 
-## Key Concepts
+**Severity scale (Nielsen's):**
 
-### The NN/g Research Methodology
-All guidelines in `references/reports.md` are based on empirical user testing (not opinion):
-- **Usability testing** — task-based studies with representative users
-- **Field studies** — in-context observation of real workflows
-- **Expert reviews** — structured heuristic evaluation
-- **Eye-tracking and click studies** — attention and interaction patterns
+- 4 — People cannot finish the task. Fix before release.
+- 3 — Major: many people will struggle or give up. High priority.
+- 2 — Minor: slows people down or annoys them. Low priority.
+- 1 — Cosmetic: fix if there is time.
 
-Confidence is proportional to sample size. Guidelines from 57-organization intranet studies or 350+ e-commerce sites carry high confidence.
+Judge severity by how many people hit it, how hard it is to get past, and whether it trips them every time or only once. Also weigh how much it could hurt the product's reputation or sales.
 
-### Guideline Categories
-The source reports organize guidelines into four main domains:
+## The 10 usability heuristics
 
-| Domain | Source Report | Guidelines |
-|---|---|---|
-| Intranet content & governance | Intranet Usability Guidelines Vol. 1 | 73 |
-| Intranet navigation & IA | Intranet Usability Guidelines Vol. 2 | 82 |
-| Intranet search | Intranet Usability Guidelines Vol. 3 | 82 |
-| Intranet branding & interaction | Intranet Usability Guidelines Vol. 4 | 61 |
-| E-commerce checkout & cart | Ecommerce UX Vol. 04 | 137 |
-| Tablet UX | Tablet Website and Application UX | 126 |
-| Children's UX (ages 3–12) | UX Design for Children, 4th Ed. | 156 |
+1. **Show what is happening.** Every action gets a visible response quickly. Loading, saving, success, and failure are all shown.
+2. **Speak the user's language.** Words and concepts the person already uses, not internal or technical terms. Information appears in a natural order.
+3. **Give an exit.** Undo, cancel, back, and close are always available and obvious. Nobody gets trapped in a flow.
+4. **Be consistent and follow conventions.** The same word and the same control mean the same thing everywhere. People spend most of their time in other apps, so match what those do.
+5. **Prevent errors.** Remove error-prone conditions, use sensible defaults and constraints, and confirm before anything destructive.
+6. **Recognition over recall.** Show the options instead of making people remember them. Never make someone carry information from one screen to the next.
+7. **Shortcuts for regulars.** Let frequent users go faster without getting in the way of new ones.
+8. **Keep it minimal.** Every extra element competes with the ones that matter. Remove what does not help the task.
+9. **Help people recover from errors.** Error messages say in plain words what went wrong and how to fix it. No codes, no blame.
+10. **Help where it is needed.** Best if no instructions are needed. If they are, put them at the point of need, short and task-focused.
 
----
+## Speed and feedback
 
-## Quick Reference
+- About 0.1 second feels instant. No feedback needed beyond the result.
+- About 1 second: the person notices the delay but stays on track.
+- About 10 seconds is the limit of attention. Anything longer needs a progress indicator and a way to cancel.
+- For any wait over a second, show that something is happening. For waits over ten, show real progress (a bar or steps), not only a spinner. A spinner alone is the last resort, for when the length cannot be known.
+- Disable or change a button after it is tapped so the person knows it registered and cannot double-submit.
 
-### 1. Intranet Usability — Core Principles
-*From: NN/g Intranet Usability Guidelines (4th Edition, 57 organizations tested)*
+## Reading and writing
 
-```
-CONTENT MANAGEMENT (73 guidelines)
-- Align content with both employee information needs AND org communication goals
-- Establish clear content ownership and governance workflows
-- Use plain language; avoid internal jargon for cross-department content
+- People scan, they do not read. On an average page they read about 20% of the words, 28% at most.
+- Put the most important words first in headings, paragraphs, links, and buttons. Start with the conclusion. If the first few words do not catch the eye, the rest is skipped.
+- Use headings that make sense on their own, short paragraphs, and lists for parallel items.
+- Plain words. Cut marketing fluff and welcome text. In NN/g's test, a version with half the words scored 58% better on usability.
+- Link and button text says what happens next. Never "click here", "learn more", or "submit" when a specific label is possible.
+- Anything that looks like an ad or a promo gets ignored, even when it is real content. Do not style important content like a banner.
 
-INFORMATION ARCHITECTURE & NAVIGATION (82 guidelines)
-- Design menus based on user mental models, not org chart structure
-- Provide consistent global navigation; avoid deep nesting (>3 levels)
-- Use descriptive link labels — avoid "click here" and generic terms
-- Support both browsing AND search as co-equal entry points
+## Navigation and finding things
 
-SEARCH (82 guidelines)
-- Surface search prominently; users expect it in the top-right or center-top
-- Return results with clear source attribution (department, date, file type)
-- Support faceted filtering by content type, date, and author
+- Visible navigation beats hidden navigation. Menus tucked behind an icon get used about half as often and make content harder to discover. On a phone, if there are four or fewer main sections, show them all as visible links. On a desktop-size screen, never hide the main navigation behind an icon.
+- Always show where the person is and how to get back.
+- Label menu items with the words users would search for, not clever or brand names.
+- Organise by how users think about the content, not by how the company or the code is structured.
+- If there is search, make it a visible box, tolerate typos, and never return a dead-end empty result. Offer a next step.
+- Auto-rotating carousels are skipped and annoy people. Use a static hero or let the person control it.
 
-BRANDING & INTERACTION (61 guidelines)
-- Visual design sets trust expectations — inconsistent UI reduces confidence
-- Use the organization's brand to create a familiar, trusted environment
-- Ensure interactive elements are visually distinct from static content
-```
+## Forms
 
-### 2. E-Commerce Checkout & Cart
-*From: NN/g Ecommerce UX Vol. 04 — 137 guidelines, 350+ sites tested in US/UK/DK/IN/CN*
+- Ask for as little as possible. Every field costs completions. Remove optional fields or mark them clearly as optional.
+- One column. Labels directly above the fields. Labels beside the fields only for very long desktop forms.
+- Do not use placeholder text as the label. It disappears when typing starts, strains memory, and makes filled and empty fields look alike.
+- Size and type the field to match the answer. On a phone, bring up the right keyboard and support autofill.
+- Check a field once the person has finished with it, not while they are still typing. The exception is a field with strict rules, such as a new password, where checking as they type helps. Do not rely only on a list of errors after submit.
+- Put the error next to the field, in plain words, saying how to fix it. Use more than colour to mark it. Never wipe what the person already typed.
+- Show passwords as they are typed, or offer a show/hide control. Hiding them causes more errors than it prevents.
+- One clear primary button. If there is a secondary action, make it visibly less prominent.
 
-```
-SHOPPING CART
-- Show cart contents, prices, and totals without requiring navigation away
-- Allow quantity editing and item removal directly in the cart
-- Persist cart contents across sessions (logged-in and guest users)
-- Display estimated shipping cost early — surprises at checkout cause abandonment
+## Phones and touch
 
-CHECKOUT FLOW
-- Minimize required fields — only collect what is necessary to complete purchase
-- Support guest checkout without mandatory account creation
-- Provide inline validation (not just end-of-form errors)
-- Show a clear progress indicator for multi-step checkout
-- Offer multiple payment options (card, PayPal, digital wallets)
+- Touch targets at least 1 cm by 1 cm (44 by 44 points on iOS), with space between them.
+- Cut controls and decoration that do not help the task, but do not hide the main navigation just to save space. A screen with more room for content is not better if people can no longer find their way around.
+- Swipes and long-presses are invisible, so people do not discover them. Never put a key action behind a gesture alone.
+- Skip onboarding screens whenever possible. People swipe past them and do not remember them. Teach in context at the moment the feature is needed.
+- Ask for a permission at the moment it is needed, after explaining what the person gets for it. At first launch, ask only for permissions the app cannot work without.
+- Do not demand sign-up before showing any value. Let people try first. The exception is an app that is personal by nature, such as email or banking.
+- Typing on a phone is slow and error-prone. Prefer pickers, defaults, and remembered values.
 
-REGISTRATION
-- Delay registration prompts until after purchase completion
-- Frame account creation as a benefit ("Save your order history") not a gate
-```
+## Buying, paywalls, and sign-up
 
-### 3. Tablet UX
-*From: NN/g Tablet Website and Application UX — 126 guidelines, 6 rounds of studies*
+- Show unusual fees and delivery costs early, before checkout. Ordinary tax and shipping can appear at checkout, but nothing should be a surprise at the last step.
+- Allow purchase without creating an account. Offer the account as an optional extra during or after checkout, framed as a benefit.
+- State plainly what is being bought, what it costs, how often it bills, and how to cancel.
+- Make declining as easy to see and tap as accepting. No guilt-trip wording on the "no" option, no close button tucked out of the way, no rushing the decision, no false claims that something is scarce or ending.
+- Never show a popup before the person has got some value. Ask for an email, a rating, or an upgrade after they finish a task. Legally required consent is the only exception.
+- Confirm success clearly and say what happens next.
 
-```
-- Tablets are NOT scaled-up phones — users browse and read more than on phones
-- Many standard websites work adequately on tablets with minor adjustments
-- Touch targets must be at minimum 44×44 points (no hover-only interactions)
-- Support both portrait and landscape orientations with meaningful layout shifts
-- Avoid flash, complex hover states, and cursor-dependent interactions
-- Users treat tablets as browsing/consumption devices, not creation tools
-```
+## Empty, error, and edge states
 
-### 4. Children's UX (Ages 3–12)
-*From: NN/g UX Design for Children, 4th Edition — 156 guidelines, studies in US/CN/IL*
+Check each screen in these states, not only the happy one:
 
-```
-AGES 3–5 (Pre-readers)
-- Use large touch targets; fine motor control is still developing
-- Rely on audio cues and icons rather than text labels
-- Avoid time pressure; children disengage from timed tasks quickly
+- Empty: never leave it blank. Say what will appear here and give a direct link or button to add the first thing.
+- Loading: show something within a second.
+- Error: plain words, what to do next, a way to retry.
+- No connection, a very long name, a very large number, one item, thousands of items.
 
-AGES 6–8 (Early readers)
-- Support both reading and audio — literacy varies within age group
-- Keep navigation extremely simple; breadcrumbs are too abstract
-- Use rewards and positive feedback consistently
+## Testing with people
 
-AGES 9–12 (Competent digital users)
-- More tolerant of complexity, but still prefer clear, direct IA
-- Social features become relevant (sharing, commenting)
-- Respect privacy expectations — avoid personal data collection dark patterns
+- Watching five people try the task finds about 85% of the problems. Three small tests of five people, with fixes in between, beat one test of fifteen.
+- Watch what people do, not what they say they would do. Give a task and stay quiet.
+- Opinions and satisfaction scores do not tell you whether people can finish the task.
 
-GENERAL (all ages)
-- Children are selective; they abandon experiences that don't quickly reward them
-- Test with real children — adult proxies are unreliable predictors of child behavior
-- Mobile and tablet testing is essential since 4th edition (2023)
-```
+## Sources
 
-### 5. Intranet Design Annual — Award-Winning Patterns
-*From: NN/g Intranet Design Annual 2020 — 10 best intranets, 189 before/after screenshots*
+All free articles on nngroup.com, read 2026-11-24.
 
-```
-- Winning intranets prioritize employee task completion over organizational announcements
-- Before/after redesigns consistently show reduction in navigation depth
-- Personalization (role-based or department-based homepages) appears in most winners
-- Search is always prominently placed and returns relevant, filterable results
-- Mobile access is a standard feature, not an enhancement, in winning designs
-```
+- Heuristics: https://www.nngroup.com/articles/ten-usability-heuristics/
+- Severity scale: https://www.nngroup.com/articles/how-to-rate-the-severity-of-usability-problems/
+- Response times: https://www.nngroup.com/articles/response-times-3-important-limits/
+- Reading: https://www.nngroup.com/articles/how-users-read-on-the-web/ and https://www.nngroup.com/articles/how-little-do-users-read/
+- Concise writing: https://www.nngroup.com/articles/concise-scannable-and-objective-how-to-write-for-the-web/
+- Ad-like content ignored: https://www.nngroup.com/articles/banner-blindness-old-and-new-findings/
+- Hidden navigation: https://www.nngroup.com/articles/hamburger-menus/
+- Carousels: https://www.nngroup.com/articles/auto-forwarding/
+- Placeholders: https://www.nngroup.com/articles/form-design-placeholders/
+- Forms: https://www.nngroup.com/articles/web-form-design/
+- Form errors: https://www.nngroup.com/articles/errors-forms-design-guidelines/
+- Passwords: https://www.nngroup.com/articles/stop-password-masking/
+- Touch targets: https://www.nngroup.com/articles/touch-target-size/
+- Content vs controls: https://www.nngroup.com/articles/content-chrome-ratio/
+- Swipe gestures: https://www.nngroup.com/articles/contextual-swipe/
+- Onboarding: https://www.nngroup.com/articles/mobile-app-onboarding/
+- Permissions: https://www.nngroup.com/articles/permission-requests/
+- Sign-up walls: https://www.nngroup.com/articles/login-walls/
+- Buying without an account: https://www.nngroup.com/articles/optional-registration/
+- Fees and shipping: https://www.nngroup.com/articles/ecommerce-taxes-fees/
+- Mobile checkout: https://www.nngroup.com/articles/mobile-checkout-ux/
+- Popups: https://www.nngroup.com/articles/popups/
+- Manipulative design: https://www.nngroup.com/articles/deceptive-patterns/
+- Empty screens: https://www.nngroup.com/articles/empty-state-interface-design/
+- Testing with five people: https://www.nngroup.com/articles/why-you-only-need-to-test-with-5-users/
+- Watch, don't ask: https://www.nngroup.com/articles/first-rule-of-usability-dont-listen-to-users/
 
----
-
-## Working with This Skill
-
-### For Beginners
-Start with the **Quick Reference** above for the domain most relevant to your task. The NN/g guidelines are organized by domain — pick the closest match (intranet, e-commerce, tablet, or children's UX).
-
-### For Specific Design Decisions
-Read `references/reports.md` for the relevant report section. Each report entry includes:
-- Research scope (number of sites/orgs tested, countries)
-- Number of design guidelines
-- Topics covered
-
-Look up the specific topic area in the report that matches your design question.
-
-### For Design Audits / Heuristic Reviews
-Use the guideline counts as a checklist framework:
-1. Identify which domain applies (intranet, e-commerce, tablet, children's)
-2. Reference the corresponding guideline set
-3. For each heuristic, evaluate whether your design satisfies, partially satisfies, or violates it
-4. Prioritize violations by frequency and severity (how often users encounter it, how much it impairs success)
-
-### For Advanced Users
-Cross-reference multiple domain reports when designs span contexts (e.g., an intranet with embedded e-commerce, or a tablet app for children). Conflicts between domain-specific guidelines are rare but should be resolved by prioritizing the guideline from the most closely matched research context.
-
----
-
-## Reference Files
-
-### `references/reports.md`
-**Source:** Nielsen Norman Group official report catalog (NN/g)
-**Confidence:** Medium (report summaries and abstracts; full guidelines require report purchase)
-**Coverage:** 487 pages of report metadata and key findings across:
-
-| Report | Guidelines | Screenshots | Method |
-|---|---|---|---|
-| Intranet Usability Guidelines (all 4 vols.) | 300+ | 800 | Usability testing, field studies, 57 orgs |
-| Ecommerce UX Vol. 04: Shopping Carts | 137 | 412 | 5 rounds of usability testing, 350+ sites |
-| Tablet Website and Application UX | 126 | 226 | 6 rounds, real users with own devices |
-| UX Design for Children, 4th Edition | 156 | 288 | 3 rounds in US, China, Israel |
-| Intranet Design Annual 2020 | N/A | 189 | Expert review of 10 winning intranets |
-
-**How to use:** Search for the relevant report by topic, read its scope and findings summary, then apply the guideline principles to your design decisions.
-
----
-
-## Key Terminology
-
-| Term | Definition |
-|---|---|
-| **Usability testing** | Task-based sessions where representative users attempt real tasks while observed |
-| **Information architecture (IA)** | How content is organized, labeled, and made navigable |
-| **Findability** | Ease with which users can locate specific content via browsing or search |
-| **Design guideline** | A specific, actionable recommendation derived from empirical research |
-| **Expert review** | Structured heuristic evaluation by UX specialists (not user testing) |
-| **Abandonment** | When a user stops a task (e.g., checkout) without completing it |
-| **Dark pattern** | UI design that manipulates users into unintended actions |
-
----
-
-## Notes
-
-- Source data is from NN/g report abstracts and summaries — the full guideline details require purchasing the reports directly
-- Guidelines reflect research conducted between 2001–2023; the most recent edition (4th) was published 2023
-- Research contexts: US, UK, Finland, Netherlands, Switzerland, Canada, UAE, China, Denmark, India, Israel
-- No codebase-derived examples exist (this is a design/UX domain, not a code library)
-- When guidelines conflict with product constraints, use the research rationale to make informed trade-offs rather than discarding the guideline entirely
-
-## Updating
-
-To refresh this skill with updated NN/g research:
-1. Re-run the scraper targeting the NN/g reports catalog
-2. The skill will be rebuilt with the latest report summaries
+Not covered by these articles, general good practice only: the right phone keyboard and autofill, disabling a button after tap, the list of edge cases to check, and search behaviour.
