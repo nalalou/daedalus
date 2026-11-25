@@ -8,7 +8,7 @@ Tools for your agent.
 
 ### `ux-best-practices`
 
-Guidelines from 487 Nielsen Norman Group reports — usability testing across 57+ organizations, 350+ ecommerce sites, and studies in 8 countries over two decades. Covers navigation, search, forms, ecommerce, mobile, intranets, accessibility, children's UX, and research methods.
+Usability rules for designing or reviewing a screen, flow, form, paywall, or checkout. Covers Nielsen's 10 heuristics, speed and feedback, writing, navigation, forms, phones, buying and sign-up, and empty and error states. Every rule is checked against Nielsen Norman Group's free articles, with the sources linked.
 
 ### `jobs-to-be-done`
 
